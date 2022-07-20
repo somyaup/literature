@@ -1,0 +1,55 @@
+Content Services
+https://www.postman.com/aerospace-operator-85270676/workspace/pratilipi-assignment-testing
+1.________________________
+API: Fetchall, GET
+task:returns all the meta content on database
+2.________________________
+API: Fetch_one, GET
+task:Fetch content for a user
+Input : userid
+Output :
+- Content meta with only unlocked chapters per series
+- Count of total episodes
+- Count of unlocked episodes
+3.________________________
+API: upload ,Post
+task:Api for bulk upload of the content
+input:request contains json with meta content and series id and name, episodes id and name
+output: success prompt
+
+User Services
+1.________________________
+API: createuser, POST
+task: create a new user
+input:request contains json with user id and name,and details of user
+output: success prompt
+2.________________________
+API: Fetchusers, GET
+task:Fetch user id,name and details
+Input : none
+Output : all users details as a json
+
+Daily Pass Service
+3.________________________
+API: unlock ,Post
+task:Api to unlock one chapters for the given user and series
+input:request contains json with userid ,series id and series name
+output: success prompt
+
+postman
+https://www.postman.com/aerospace-operator-85270676/workspace/pratilipi-assignment-testing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
