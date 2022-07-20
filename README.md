@@ -1,4 +1,6 @@
 # literature
+postman tests:
+https://www.postman.com/aerospace-operator-85270676/workspace/pratilipi-assignment-testing
 Microservice Backend Intern Assignment
 This application contains three services,
 Content Service
