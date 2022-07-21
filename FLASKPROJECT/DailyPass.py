@@ -1,14 +1,20 @@
 # Apis required for DailyPass
 # - Api to unlock one chapters for the given user and series: unock
-import pymysql
 from app import app
-from config import mysql
+from flaskext.mysql import MySQL
 from flask import jsonify
 from flask import flash, request, Flask
 from flask import Flask
 
-app = Flask(__name__)
+mysql = MySQL()
 
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_DB'] = 'DAILYPASS'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql.init_app(app)
+
+app = Flask(__name__)
 
 @app.route('/')
 def hello_world():  # put application's code here
@@ -77,5 +83,5 @@ def not_found(error=None):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=False, host='0.0.0.0')
 
