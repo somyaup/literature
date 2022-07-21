@@ -3,16 +3,17 @@
 #- Fetch by id      :    fetchid
 #- Create user      :    createuser
 
-
-import pymysql
-from app import app
-from config import mysql
-from flask import jsonify
-from flask import flash, request,Flask
-from flask import Flask
+from flaskext.mysql import MySQL
+from flask import jsonify,request,Flask
 
 app = Flask(__name__)
 
+mysql = MySQL()
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_DB'] = 'USERBASE'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql.init_app(app)
 
 @app.route('/')
 def hello_world():  # put application's code here
@@ -87,7 +88,6 @@ def createUser():
         cursor.close()
         conn.close()
 
-
 @app.errorhandler(404)
 def not_found(error=None):
     message = {
@@ -99,8 +99,5 @@ def not_found(error=None):
 
     return resp
 
-
-
 if __name__ == "__main__":
-    app.run()
-
+    app.run(debug=False, host=0.0.0.0)
