@@ -35,10 +35,8 @@ def unlock():
         cursor = conn.cursor()
         cursor.execute("SELECT episodes FROM Series where idSeries=%s", _Series_id)
         max_ep = cursor.fetchone()[0]
-        print (max_ep)
         cursor.execute("SELECT unlocked FROM series_has_users where series_idSeries=%s and users_id_users=%s",( _user_id, _Series_id))
-        unlocked = cursor.fetchone()[0]
-        print(unlocked)
+        unlocked = cursor.fetchone()[0] 
         if unlocked==None:
             unlocked=min(4,max_ep)
             sql = "Insert into series_has_users values (%s,%s,%s,%s) "
