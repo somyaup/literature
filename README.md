@@ -1,4 +1,5 @@
 # literature
+hosted on :http://ec2-52-22-203-206.compute-1.amazonaws.com/
 postman tests:
 https://www.postman.com/aerospace-operator-85270676/workspace/pratilipi-assignment-testing
 Microservice Backend Intern Assignment
