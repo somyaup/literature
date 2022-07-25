@@ -1,7 +1,7 @@
 # literature
 hosted on :http://ec2-54-89-146-16.compute-1.amazonaws.com
 postman tests:
-https://www.postman.com/aerospace-operator-85270676/workspace/pratilipi-assignment-testing
+https://www.postman.com/interstellar-equinox-139590/workspace/pratilipi-assignment-testing
 Microservice Backend Intern Assignment
 This application contains three services,
 Content Service
