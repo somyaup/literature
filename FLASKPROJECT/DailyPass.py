@@ -8,8 +8,8 @@ app = Flask(__name__)
 mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'DAILYPASS'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_DB'] = 'DailyPass'
+app.config['MYSQL_DATABASE_HOST'] = 'awsrds'
 mysql.init_app(app)
 
 @app.route('/')
@@ -35,7 +35,7 @@ def unlock():
         cursor = conn.cursor()
         cursor.execute("SELECT episodes FROM Series where idSeries=%s", _Series_id)
         max_ep = cursor.fetchone()[0]
-        cursor.execute("SELECT unlocked FROM series_has_users where series_idSeries=%s and users_id_users=%s",( _user_id, _Series_id))
+        cursor.execute("SELECT unlocked FROM series_has_users where Series_idSeries=%s and users_id_users=%s",( _user_id, _Series_id))
         unlocked = cursor.fetchone()[0] 
         if unlocked==None:
             unlocked=min(4,max_ep)
@@ -47,7 +47,7 @@ def unlock():
             resp.status_code = 200
         if unlocked<max_ep:
             unlocked=unlocked+1
-            sql = "update Series_has_users set unlocked=%s where series_idSeries=%s and users_id_users=%s "
+            sql = "update series_has_users set unlocked=%s where Series_idSeries=%s and users_id_users=%s "
             data = (unlocked, _user_id, _Series_id)
             cursor.execute(sql, data)
             conn.commit()
