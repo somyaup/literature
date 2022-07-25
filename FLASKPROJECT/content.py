@@ -9,12 +9,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route('/fetchall')
 def fetchall():
+    print ('start')
+    app.config['MYSQL_DATABASE_DB'] = 'Content'
     conn = None
     cursor = None
     try:
         conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT meta FROM Episodes")
+        cursor = conn.cursor()
+        cursor.execute("SELECT meta FROM episodes")
         rows = cursor.fetchall()
         resp = jsonify(rows)
         resp.status_code = 200
@@ -25,40 +27,36 @@ def fetchall():
         cursor.close()
         conn.close()
 
-
 @app.route('/fetch_one/<int:id>')
 def fetch_one(id):
+    app.config['MYSQL_DATABASE_DB'] = 'Content'
     conn = None
     cursor = None
     try:
         conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute(
-            "SELECT series_idSeries from Series_has_users where users_id_users=%s",id)
+        cursor = conn.cursor()
+        cursor.execute("SELECT Series_idSeries from series_has_users where users_id_users=%s",id)
         IDSER = cursor.fetchall()
         row1=[]
-        print (IDSER)
         for idser in IDSER:
-            print(idser['series_idSeries'])
             cursor.execute(
-                "select unlocked from Series_has_users where users_id_users= % s and series_idseries= % s",(id,idser['series_idSeries']));
+                "select unlocked from series_has_users where users_id_users= % s and Series_idSeries= % s",(id,idser));
             unl= cursor.fetchone()
-            print (unl['unlocked'])
             cursor.execute(
-                "SELECT * FROM episodes WHERE  series_idSeries =%s and ep_no<=%s ", (idser['series_idSeries'],unl['unlocked']))
-            row1.append( cursor.fetchall())
+                "SELECT * FROM episodes WHERE  Series_idSeries =%s and ep_no<=%s ", (idser,unl))
+            row1.append(cursor.fetchall())
         cursor.execute(
-            "SELECT sum(unlocked) FROM Series_has_users WHERE users_id_users=%s ", id)
+            "SELECT sum(unlocked) FROM series_has_users WHERE users_id_users=%s ", id)
         row2 = cursor.fetchone()
         cursor.execute(
-            "SELECT sum(episodes) FROM Series")
+            "SELECT sum(episodes) FROM series")
         row3 = cursor.fetchone()
         row={"meta":row1,"unlocked":row2,"total":row3}
         resp = jsonify(row)
         resp.status_code = 200
         return resp
     except Exception as e:
-        print(e)
+        return(e)
     finally:
         cursor.close()
         conn.close()
@@ -81,9 +79,9 @@ def fetch_one(id):
 #       meta:{episodes1},{episode2},..}
 #   }
 #}
-
 @app.route('/upload', methods=['POST'])
 def upload():
+    app.config['MYSQL_DATABASE_DB'] = 'Content'
     conn = None
     cursor = None
     try:
@@ -95,41 +93,47 @@ def upload():
             _episodes = _json['episodes']
             _meta = _json['meta']
             _upload_time=_json['time']
-            start=1
+            index = 1
             if _json['new']=='yes':
                 Sql = "INSERT INTO  Series VALUES(%s, %s, %s, %s)"
-                Data=(_series_id ,_series_name,_episodes ,_upload_time)
+                Data=(_series_id,_series_name,_episodes ,_upload_time)
+                print(Data)
                 conn = mysql.connect()
                 cursor = conn.cursor()
                 cursor.execute(Sql, Data)
                 conn.commit()
             else:
+                conn = mysql.connect()
+                cursor = conn.cursor()
+                Data = (_series_id, _series_name, _episodes, _upload_time)
+                print(Data)
                 cursor.execute(
-                    "SELECT episodes FROM Series WHERE idSeries=%s ", _series_id)
-                start = cursor.fetchone()
-                added=start+_episodes
+                    "SELECT episodes FROM series WHERE idSeries=%s ", _series_id)
+                index= cursor.fetchone()[0]
+                print(index)
+                add = index + _episodes
                 cursor.execute(
-                    "update series set episodes=%s where idSeries=%s",(added,_series_id))
-
+                    "update series set episodes=%s where idSeries=%s",(add,_series_id))
+                conn.commit()
             for ep in _meta:
                 _name=ep['name']
                 _epid=ep['id']
                 _Ep_meta=ep['meta']
                 sql = "INSERT INTO episodes VALUES(%s, %s, %s, %s,%s,%s)"
-                data = (_epid,_name,_Ep_meta,_upload_time,_series_id,start )
+                data = (_epid,_name,_Ep_meta,_upload_time,_series_id,index)
                 cursor.execute(sql, data)
                 conn.commit()
-                start=start+1
+                print(data)
+                index=index+1
             count=count+1
         resp = jsonify(count,' successful Updates!')
         resp.status_code = 200
         return resp
     except Exception as e:
-        print(e)
+         print(e)
     finally:
-        cursor.close()
-        conn.close()
-
+         cursor.close()
+         conn.close()
 
 @app.errorhandler(404)
 def not_found(error=None):
