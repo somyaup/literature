@@ -39,11 +39,12 @@ def fetchusers():
 
 @app.route('/Fetchid/<id>',methods=['GET'])
 def fetchid(id):
+    app.config['MYSQL_DATABASE_DB'] = 'USERBASE'
     conn = None
     cursor = None
     try:
         conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor = conn.cursor()
         cursor.execute("SELECT details FROM users where id_users=%s",id)
         rows = cursor.fetchone()
         resp = jsonify(rows)
@@ -64,6 +65,7 @@ def fetchid(id):
 # }
 @app.route('/createuser', methods=['POST'])
 def createUser():
+    app.config['MYSQL_DATABASE_DB'] = 'USERBASE'
     conn = None
     cursor = None
     try:
@@ -87,6 +89,7 @@ def createUser():
     finally:
         cursor.close()
         conn.close()
+
 
 @app.errorhandler(404)
 def not_found(error=None):
